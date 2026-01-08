@@ -1,5 +1,5 @@
 Package: reviz
-Title: Visualize Variable Relationships with Model Overlays
+Title: Variable Relationship Explorer with Model Overlays
 Version: 0.1.0
 Authors@R: c(
     person(
@@ -8,13 +8,14 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: Create scatterplots of variable relationships with fitted model overlays (linear, loess). Supports coloring or faceting by third variable. Works with any data frame including critstats datasets like africa_data_all.
+Description: Interactive scatterplot explorer with linear, LOESS, polynomial, and robust models. 
+    Includes 500-county North Carolina inequality dataset and integration with critstats package.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Imports:
     ggplot2,
-    shiny
+    shiny,
+    MASS
 Suggests:
     critstats
 Roxygen: list(markdown = TRUE)

@@ -8,15 +8,16 @@ launch_reviz_app <- function() {
 
       sidebarLayout(
         # LEFT: Controls
-        sidebarPanel(
-          width = 3,
-          selectInput("dataset", "Choose Dataset:",
-                      choices = c("mtcars", "iris", "critstats::africa_data_all")),
+        shiny::sidebarPanel(
+shiny::sidebarPanel(
+  shiny::selectInput("data_pkg", "📦 Data Package:", selected = "base"),
+  shiny::selectInput("dataset", "📊 Dataset:", selected = "mtcars"),
+  shiny::selectInput("x", "📈 X Variable:", selected = "wt"),
+  shiny::selectInput("y", "📉 Y Variable:", selected = "mpg"),
+  shiny::radioButtons("model", "📏 Model:", selected = "lm")
+),
 
-          conditionalPanel(
-            condition = "input.dataset == 'critstats::africa_data_all'",
-            htmlOutput("critstats_warning")
-          ),
+
 
           hr(),
 

@@ -23,7 +23,7 @@ remotes::install_github("professornaite/critstats", force = TRUE)
 
 # Load both packages
 library(critstats)
-library(reviz)
+library(reviz) 
 
 # Use any dataset from critstats
 res <- reviz_plot(

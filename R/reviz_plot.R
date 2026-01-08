@@ -1,19 +1,29 @@
 #' Visualize relationships with model overlay
 #'
-#' @param data A data.frame.
-#' @param x Name of x variable (string).
-#' @param y Name of y variable (string).
+#' @param data A data.frame
+#' @param x X variable name
+#' @param y Y variable name
+#' @param z Optional grouping variable for color/facets
+#' @param model "lm" or "loess"
+#' @param use_color TRUE for color, FALSE for facets
 #'
-#' @return A ggplot object.
+#' @return ggplot object
 #' @export
-reviz_plot <- function(data, x, y) {
+reviz_plot <- function(data, x, y, z = NULL, model = c("lm", "loess"), use_color = TRUE) {
+  model <- match.arg(model)
 
-  p <- ggplot2::ggplot(
-    data = data,
-    mapping = ggplot2::aes_string(x = x, y = y)
-  ) +
-    ggplot2::geom_point(alpha = 0.7) +
-    ggplot2::geom_smooth(method = "lm", se = TRUE)
+  p <- ggplot(data, aes_string(x = x, y = y)) +
+    geom_point(alpha = 0.7, size = 2) +
+    geom_smooth(method = model, se = TRUE, size = 1.2) +
+    theme_minimal()
 
-  p
+  if (!is.null(z) && z != "") {
+    if (use_color) {
+      p <- p + aes_string(color = z)
+    } else {
+      p <- p + facet_wrap(as.formula(paste("~", z)))
+    }
+  }
+
+  p + labs(title = paste(y, "~", x))
 }

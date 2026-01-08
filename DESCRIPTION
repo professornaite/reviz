@@ -15,5 +15,7 @@ LazyData: true
 Imports:
     ggplot2,
     shiny
+Suggests:
+    critstats
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

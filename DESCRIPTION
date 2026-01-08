@@ -13,7 +13,6 @@ Description: Simple tools to visualize relationships between variables.
 License: MIT
 Encoding: UTF-8
 LazyData: true
-
 Imports:
     ggplot2
-
+    critstats

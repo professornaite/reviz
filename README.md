@@ -44,4 +44,5 @@ reviz_plot(
 
 Returns a ggplot2 object with scatterplot + linear model overlay
 =======
+
 A package to visualize relationships and model fits

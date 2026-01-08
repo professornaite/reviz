@@ -1,6 +1,5 @@
 Package: reviz
-Type: Package
-Title: What the Package Does (Title Case)
+Title: Visualize Variable Relationships with Model Overlays
 Version: 0.1.0
 Authors@R: c(
     person(
@@ -9,10 +8,12 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: Simple tools to visualize relationships between variables.
-License: MIT
+Description: Create scatterplots of variable relationships with fitted model overlays (linear, loess). Supports coloring or faceting by third variable. Works with any data frame including critstats datasets like africa_data_all.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    ggplot2
+    ggplot2,
     critstats
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

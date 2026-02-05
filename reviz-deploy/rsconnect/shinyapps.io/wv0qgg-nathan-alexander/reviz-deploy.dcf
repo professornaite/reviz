@@ -1,0 +1,10 @@
+name: reviz-deploy
+title:
+username: wv0qgg-nathan-alexander
+account: wv0qgg-nathan-alexander
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16604354
+bundleId: 11542353
+url: https://wv0qgg-nathan-alexander.shinyapps.io/reviz-deploy/
+version: 1

@@ -1,0 +1,23 @@
+Package: reviz
+Title: Variable Relationship Explorer with Model Overlays
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Nathan", "Alexander",
+      email = "nathan.alexander@howard.edu",
+      role = c("aut", "cre")
+    )
+  )
+Description: Interactive scatterplot explorer with linear, LOESS, polynomial, and robust models. 
+    Includes 500-county North Carolina inequality dataset and integration with critstats package.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports: ggplot2, shiny, MASS
+Suggests: critstats
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+NeedsCompilation: no
+Packaged: 2026-01-08 04:32:44 UTC; nathanalexander
+Author: Nathan Alexander [aut, cre]
+Maintainer: Nathan Alexander <nathan.alexander@howard.edu>
+Built: R 4.5.1; ; 2026-01-08 04:32:46 UTC; unix

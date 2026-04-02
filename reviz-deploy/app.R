@@ -1,5 +1,5 @@
 library(reviz)
 library(ggplot2)
-library(critstats)  # if needed for your datasets
-library(MASS)       # for rlm model
+library(critstats)
+library(MASS)
 launch_reviz()

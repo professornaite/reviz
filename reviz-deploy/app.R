@@ -11,9 +11,14 @@ if (!requireNamespace("critstats", quietly = TRUE)) {
   remotes::install_github("professornaite/critstats", force = TRUE, upgrade = "never")
 }
 
-if (!requireNamespace("reviz", quietly = TRUE)) {
-  remotes::install_github("professornaite/reviz", force = TRUE, upgrade = "never")
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
+if (!requireNamespace("MASS", quietly = TRUE)) {
+  install.packages("MASS")
 }
 
-library(reviz)
+library(shiny)
+library(ggplot2)
+library(MASS)
 reviz::launch_reviz()

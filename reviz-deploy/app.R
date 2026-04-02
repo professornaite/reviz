@@ -11,4 +11,5 @@ if (!requireNamespace("reviz", quietly = TRUE)) {
 }
 
 library(reviz)
+
 reviz::launch_reviz()

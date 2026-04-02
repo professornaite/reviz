@@ -58,23 +58,26 @@ launch_reviz <- function() {
           selected = "builtin"
         ),
 
-        shiny::conditionalPanel(
-          condition = "input.data_source == 'builtin'",
-          shiny::selectInput(
-            "data_pkg",
-            "Data Package",
-            choices = c("Base R" = "base", "Systems" = "systems", "critstats" = "critstats"),
-            selected = "base"
-          )
+        shiny::radioButtons(
+          "data_pkg",
+          "Dataset Library",
+          choices = c(
+            "Base R datasets" = "base",
+            "Inequality Systems (reviz)" = "systems",
+            "critstats datasets" = "critstats"
+          ),
+          selected = "base"
         ),
 
-        shiny::conditionalPanel(
-          condition = "input.data_source == 'builtin'",
-          shiny::selectInput(
-            "dataset",
-            "Dataset",
-            choices = c("mtcars" = "mtcars", "iris" = "iris"),
-            selected = "mtcars"
+        shiny::selectInput(
+          "dataset",
+          "Dataset",
+          choices = c(
+            "mtcars",
+            "iris",
+            "USArrests",
+            "ChickWeight",
+            "ToothGrowth"
           )
         ),
 
@@ -82,7 +85,7 @@ launch_reviz <- function() {
           "analysis_type",
           "Analysis Type",
           choices = c(
-            "Correlation" = "correlation",
+            "Correlation Test" = "correlation",
             "ANOVA" = "anova",
             "MANOVA" = "manova",
             "Linear Regression" = "linear_regression"
@@ -90,35 +93,7 @@ launch_reviz <- function() {
           selected = "correlation"
         ),
 
-        shiny::conditionalPanel(
-          condition = "input.analysis_type == 'correlation'",
-          shiny::selectInput("x", "Variable 1", choices = names(mtcars), selected = "wt"),
-          shiny::selectInput("y", "Variable 2", choices = names(mtcars), selected = "mpg"),
-          shiny::selectInput(
-            "cor_method",
-            "Correlation Method",
-            choices = c("Pearson" = "pearson", "Spearman" = "spearman", "Kendall" = "kendall"),
-            selected = "pearson"
-          )
-        ),
-
-        shiny::conditionalPanel(
-          condition = "input.analysis_type == 'anova'",
-          shiny::selectInput("anova_y", "Numeric Outcome", choices = names(mtcars), selected = "mpg"),
-          shiny::selectInput("anova_group", "Grouping Variable", choices = names(mtcars), selected = "cyl")
-        ),
-
-        shiny::conditionalPanel(
-          condition = "input.analysis_type == 'manova'",
-          shiny::selectizeInput("manova_y", "Numeric Outcomes (2+)", choices = names(mtcars), multiple = TRUE),
-          shiny::selectInput("manova_group", "Grouping Variable", choices = names(mtcars), selected = "cyl")
-        ),
-
-        shiny::conditionalPanel(
-          condition = "input.analysis_type == 'linear_regression'",
-          shiny::selectInput("lm_y", "Numeric Outcome", choices = names(mtcars), selected = "mpg"),
-          shiny::selectizeInput("lm_x", "Predictors", choices = names(mtcars), multiple = TRUE, selected = c("wt"))
-        ),
+        shiny::uiOutput("analysis_controls"),
 
         shiny::actionButton("run_test", "Run Analysis", class = "btn-primary")
       ),
@@ -126,9 +101,18 @@ launch_reviz <- function() {
       shiny::mainPanel(
         width = 9,
         shiny::uiOutput("test_info"),
+
+        shiny::h4("Dataset Structure"),
+        shiny::verbatimTextOutput("data_structure"),
+
+        shiny::h4("Five Number Summary"),
+        shiny::verbatimTextOutput("five_number_summary"),
+
         shiny::h4("Results"),
         shiny::verbatimTextOutput("result_summary"),
+
         shiny::plotOutput("plot", height = "550px"),
+
         shiny::h4("Reproducible R Code"),
         shiny::actionButton("copy_code", "Copy Code", onclick = "copyRevizCode()"),
         shiny::tags$pre(id = "r_code_text", shiny::textOutput("r_code", container = shiny::span)),
@@ -160,11 +144,17 @@ launch_reviz <- function() {
     })
 
     get_data <- shiny::reactive({
+
+      shiny::req(input$data_source)
+
       if (input$data_source == "uploaded" && !is.null(uploaded_data())) {
         return(uploaded_data())
       }
 
-      if (input$data_pkg == "systems" && input$dataset == "inequality_systems") {
+      if (!is.null(input$data_pkg) &&
+          !is.null(input$dataset) &&
+          input$data_pkg == "systems" &&
+          input$dataset == "inequality_systems") {
         return(inequality_systems)
       } else if (input$data_pkg == "base") {
         return(get(input$dataset, "package:datasets"))
@@ -264,6 +254,73 @@ launch_reviz <- function() {
       if (is.numeric(x)) return(factor(x))
       factor(x)
     }
+
+    dataset_diagnostics <- function(df) {
+
+      structure_text <- capture.output(str(df))
+
+      numeric_cols <- df[sapply(df, is.numeric)]
+
+      five_num <- if (ncol(numeric_cols) > 0) {
+        apply(numeric_cols, 2, function(x) {
+          stats::fivenum(x, na.rm = TRUE)
+        })
+      } else {
+        "No numeric variables available."
+      }
+
+      list(
+        structure = paste(structure_text, collapse = "\n"),
+        five_number = capture.output(print(five_num))
+      )
+    }
+
+    output$analysis_controls <- shiny::renderUI({
+      data <- get_data()
+      shiny::req(data)
+      vars <- names(data)
+
+      if (input$analysis_type == "correlation") {
+        shiny::tagList(
+          shiny::selectInput("x", "Variable 1", choices = vars),
+          shiny::selectInput("y", "Variable 2", choices = vars),
+
+          shiny::selectInput(
+            "cor_method",
+            "Correlation Method",
+            choices = c(
+              "Pearson" = "pearson",
+              "Spearman Rank" = "spearman",
+              "Kendall Tau" = "kendall"
+            )
+          ),
+
+          shiny::numericInput(
+            "conf_level",
+            "Confidence Level",
+            value = 0.95,
+            min = 0.8,
+            max = 0.99,
+            step = 0.01
+          )
+        )
+      } else if (input$analysis_type == "anova") {
+        shiny::tagList(
+          shiny::selectInput("anova_y", "Numeric Outcome", choices = vars, selected = vars[1]),
+          shiny::selectInput("anova_group", "Grouping Variable", choices = vars, selected = vars[min(2, length(vars))])
+        )
+      } else if (input$analysis_type == "manova") {
+        shiny::tagList(
+          shiny::selectizeInput("manova_y", "Numeric Outcomes (2+)", choices = vars, multiple = TRUE, selected = vars[1:min(2, length(vars))]),
+          shiny::selectInput("manova_group", "Grouping Variable", choices = vars, selected = vars[min(3, length(vars))])
+        )
+      } else if (input$analysis_type == "linear_regression") {
+        shiny::tagList(
+          shiny::selectInput("lm_y", "Numeric Outcome", choices = vars, selected = vars[1]),
+          shiny::selectizeInput("lm_x", "Predictors", choices = vars, multiple = TRUE, selected = vars[min(2, length(vars))])
+        )
+      }
+    })
 
     analysis_result <- shiny::eventReactive(input$run_test, {
       data <- get_data()
@@ -655,6 +712,19 @@ launch_reviz <- function() {
         "\nObservations:", nrow(data),
         "\nSelected analysis:", input$analysis_type
       )
+    })
+
+    output$data_structure <- shiny::renderText({
+      df <- get_data()
+      shiny::req(df)
+      diag <- dataset_diagnostics(df)
+      diag$structure
+    })
+
+    output$five_number_summary <- shiny::renderText({
+      df <- get_data()
+      diag <- dataset_diagnostics(df)
+      paste(diag$five_number, collapse = "\n")
     })
 
     shiny::observeEvent(input$copy_code_clicked, {

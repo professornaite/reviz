@@ -1,3 +1,5 @@
+Sys.setenv(RENV_CONFIG_ACTIVE = "FALSE")
+
 if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes")
 }

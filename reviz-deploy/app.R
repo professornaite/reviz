@@ -12,7 +12,7 @@ if (!requireNamespace("critstats", quietly = TRUE)) {
 }
 
 if (!requireNamespace("reviz", quietly = TRUE)) {
-  install.packages("reviz_0.1.0.tar.gz", repos = NULL, type = "source")
+  remotes::install_github("professornaite/reviz", force = TRUE, upgrade = "never")
 }
 
 library(reviz)

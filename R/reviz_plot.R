@@ -25,5 +25,9 @@ reviz_plot <- function(data, x, y, z = NULL, model = c("lm", "loess"), use_color
     }
   }
 
-  p + ggplot2::labs(title = paste(y, "~", x))
+  p <- p + ggplot2::geom_smooth(method = model, se = TRUE, linewidth = 1.2) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(title = paste(y, "~", x))
+
+  p
 }

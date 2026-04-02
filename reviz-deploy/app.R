@@ -1,5 +1,7 @@
 library(reviz)
 library(ggplot2)
+library(remotes)
+remotes::install_github("professornaite/critstats", force=TRUE)
 library(critstats)
 library(MASS)
 launch_reviz()

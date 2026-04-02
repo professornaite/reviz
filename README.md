@@ -1,6 +1,6 @@
 # reviz
 
-Visualize relationships between variables.
+Visualize relationships between variables in a data set.
 
 ## Installation
 
